@@ -1,5 +1,13 @@
 package util;
 
+/**
+ * 
+ * Encapsulated Object for Process id and its UID
+ * 
+ * @author varadhan
+ *
+ */
+
 public class ProcessUID {
 	int processNumber;
 	int processUID;

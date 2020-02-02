@@ -4,6 +4,13 @@ import impl.HSAlgoImpl;
 import interfaces.HSAlgo;
 import util.ProcessUID;
 
+/**
+ * 
+ * Java Main class which takes the input from user
+ * 
+ * @author varadhan
+ *
+ */
 public class MainClass {
 
   public static void main(String[] str) {
