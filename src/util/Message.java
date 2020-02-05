@@ -10,9 +10,9 @@ package util;
 public class Message {
 	private int id;
 	private int hops;
-	private String direction; //in or out. Can change this to an int or something if you like
+	private int direction; //an int indicating direction, x if going out, x if going in
 	
-	public Message(int originatorsID, int startingHopsNum, String directionOfTravel) {
+	public Message(int originatorsID, int startingHopsNum, int directionOfTravel) {
 		id = originatorsID;
 		hops = startingHopsNum;
 		direction = directionOfTravel;
@@ -30,11 +30,11 @@ public class Message {
 		hops = newNumHops;
 	}
 	
-	public String getDirection(){
+	public int getDirection(){
 		return direction;
 	}
 	
-	public void setDirection(String newDirection){
+	public void setDirection(int newDirection){
 		direction = newDirection;
 	}
 }
