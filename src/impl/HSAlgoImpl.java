@@ -25,6 +25,8 @@ public class HSAlgoImpl implements HSAlgo {
 	private Message messageLNeighbor; //the message received from this process's left neighbor
 	private Message messageRNeighbor; //the message received from this process's right neighbor
 	
+	String status = "UNKNOWN";
+	
 
     public ProcessThreadObject(int pId, int pUID) {
       this.processId = pId;
@@ -40,6 +42,56 @@ public class HSAlgoImpl implements HSAlgo {
     @Override
     public void run() {
       // HS Algorithm will be implemented here
+    
+      Message message = new Message(this.processUID, 1, 1);
+      this.sendMessageToRightNeighbor(message);
+      this.sendMessageToLeftNeighbor(message);
+      
+      if (this.messageLNeighbor.getDirection() == 1) {
+    	  
+    	  Message leftMessage = this.messageLNeighbor;
+    	  if ((leftMessage.getId() > this.processUID) && leftMessage.getHops() > 1) {
+    		  leftMessage.setHops(leftMessage.getHops()-1);
+    		  this.sendMessageToRightNeighbor(leftMessage);
+    	  }
+    	  else if((leftMessage.getId() > this.processUID) && (leftMessage.getHops() == 1)) {
+    		  leftMessage.setDirection(0);
+    		  this.sendMessageToLeftNeighbor(message);
+    	  }
+    	  else if (leftMessage.getId() > this.processUID) {
+    		  status = "LEADER";
+    	  }
+      }
+      
+      if (this.messageRNeighbor.getDirection() == 1) {
+    	  
+    	  Message rightMessage = this.messageRNeighbor;
+    	  if ((rightMessage.getId() > this.processUID) && rightMessage.getHops() > 1) {
+    		  rightMessage.setHops(rightMessage.getHops()-1);
+    		  this.sendMessageToLeftNeighbor(rightMessage);
+    	  }
+    	  else if((rightMessage.getId() > this.processUID) && (rightMessage.getHops() == 1)) {
+    		  rightMessage.setDirection(0);
+    		  this.sendMessageToRightNeighbor(rightMessage);
+    	  }
+    	  else if (rightMessage.getId() > this.processUID) {
+    		  status = "LEADER";
+    	  }
+      }
+      
+      if ((this.messageLNeighbor.getDirection() == 0) && this.messageLNeighbor.getId() > this.processUID) {
+    	  this.sendMessageToRightNeighbor(message);
+      }
+      
+      if ((this.messageRNeighbor.getDirection() == 0) && (this.messageRNeighbor.getId() > this.processUID)) {
+    	  this.sendMessageToLeftNeighbor(message);
+      }
+      
+      if ((this.messageLNeighbor.getDirection() == 0) && (this.messageRNeighbor.getDirection() == 0)) {
+    	  
+    	  this.sendMessageToLeftNeighbor(message);
+      }
+    
       System.out
           .println("Process Id is :" + this.processId + " and its UID is :" + this.processUID);
     }
