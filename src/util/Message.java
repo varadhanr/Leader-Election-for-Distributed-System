@@ -10,7 +10,7 @@ package util;
 public class Message {
 	private int id;
 	private int hops;
-	private int direction; //an int indicating direction, x if going out, x if going in
+	private int direction; //an int indicating direction, 1 if going out, 0 if going in
 	
 	public Message(int originatorsID, int startingHopsNum, int directionOfTravel) {
 		id = originatorsID;
