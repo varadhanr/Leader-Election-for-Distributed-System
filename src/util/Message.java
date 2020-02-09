@@ -11,11 +11,13 @@ public class Message {
 	private int id;
 	private int hops;
 	private int direction; //an int indicating direction, 1 if going out, 0 if going in
+	private String message_type;
 	
-	public Message(int originatorsID, int startingHopsNum, int directionOfTravel) {
+	public Message(int originatorsID, int startingHopsNum, int directionOfTravel, String type) {
 		id = originatorsID;
 		hops = startingHopsNum;
 		direction = directionOfTravel;
+		message_type = type;
 	}
 	
 	public int getId() {
@@ -37,4 +39,14 @@ public class Message {
 	public void setDirection(int newDirection){
 		direction = newDirection;
 	}
+	
+	
+	public String getMessageType(){
+		return message_type;
+	}
+	
+	public void setMessageType(String type){
+		message_type = type;
+	}
+	
 }

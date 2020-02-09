@@ -11,16 +11,12 @@ public class HSAlgoImpl implements HSAlgo {
 
   int num_of_processes;
   ProcessUID processUID[];
-  
-  int num_of_unknown_processes;
 
-  static boolean done = false;
-  private static CyclicBarrier barrier;
+  private static CyclicBarrier barrier, barrier_message_sent;
 
   public HSAlgoImpl(int num_of_processes, ProcessUID[] processUID) {
     this.num_of_processes = num_of_processes;
     this.processUID = processUID;
-    this.num_of_unknown_processes = num_of_processes;
   }
 
   class ProcessThreadObject extends Thread {
@@ -31,13 +27,13 @@ public class HSAlgoImpl implements HSAlgo {
     int processUID;
 	private ProcessThreadObject leftNeighbor;
 	private ProcessThreadObject rightNeighbor;
-	private Message messageLNeighbor; //the message received from this process's left neighbor
-	private Message messageRNeighbor; //the message received from this process's right neighbor
+	private Message messageFromLNeighbor; //the message received from this process's left neighbor
+	private Message messageFromRNeighbor; //the message received from this process's right neighbor
 	
-	private Message messageToRNeighbor;
-	private Message messageToLNeighbor;
+	private Message messageToRNeighbor; //the message sent to this process's left neighbor
+	private Message messageToLNeighbor; //the message sent to this process's right neighbor
 	
-	String status;
+	String status;	
 	int phase;
 	
 
@@ -46,15 +42,15 @@ public class HSAlgoImpl implements HSAlgo {
       this.processUID = pUID;
       
       //initially, all messages received from neighbors are null
-      this.messageLNeighbor = null;
-      this.messageRNeighbor = null;
+      messageFromLNeighbor = null;
+      messageFromRNeighbor = null;
       
       //set right and left neighbors to be null. call setLeft/RightNeighbor() to change this
-      this.leftNeighbor = null;
-      this.rightNeighbor = null;
+      leftNeighbor = null;
+      rightNeighbor = null;
       
-      this.messageToRNeighbor = null;
-      this.messageToLNeighbor = null;
+      messageToRNeighbor = null;
+      messageToLNeighbor = null;
       
       status = "UNKNOWN";
       phase = 0;
@@ -64,110 +60,135 @@ public class HSAlgoImpl implements HSAlgo {
     public void run() {
       // HS Algorithm will be implemented here
     	
-      this.messageToRNeighbor = new Message(this.processUID, 1, 1);
-      this.messageToLNeighbor = new Message(this.processUID, 1, 1);
+      messageToRNeighbor = new Message(this.processUID, 1, 1, "UNKNOWN");
+      messageToLNeighbor = new Message(this.processUID, 1, 1, "UNKNOWN");
       
-      while(!done) { 
-    	  if (this.messageToLNeighbor.getDirection() != -1)
-    		  this.sendMessageToLeftNeighbor(this.messageToLNeighbor);
-    	  if (this.messageToRNeighbor.getDirection() != -1)
-    		  this.sendMessageToRightNeighbor(this.messageToRNeighbor);
+      int leader;
+      
+      while(true) { 
+          this.sendMessageToLeftNeighbor(messageToLNeighbor);
+    	  this.sendMessageToRightNeighbor(messageToRNeighbor);
     	  
-	      try
-	      { 
-	          // thread to sleep for 1000 milliseconds 
-	          Thread.sleep(1000); 
-	      } 
-	
-	      catch (Exception e) 
-	      { 
-	          System.out.println(e); 
-	      } 
+    	  try {
+	            // do not proceed, until all n threads have sent messages to it's neighbors
+	          barrier_message_sent.await();
+          } catch (InterruptedException ex) {
+        	  return;
+          } catch (BrokenBarrierException ex) {
+        	  return;
+          }
+        
+    	  //messages to be sent to the left and right neighbor in next round
+    	  messageToRNeighbor = null;
+          messageToLNeighbor = null;
 	      
-	      System.out
-          .println("Process with Id :" + this.processUID + " is " + this.messageToLNeighbor.getDirection());
-	      System.out
-          .println("Process with Id :" + this.processUID + " is " + this.messageToRNeighbor.getDirection());
+          //Broadcasting leader's UID to right neighbors
+          if (messageFromLNeighbor != null  && (messageFromLNeighbor.getMessageType() == "ELECTED")) {
+        	  if (this.status == "TERMINATE") //thread already terminated
+        		  break;
+        	  this.status = "TERMINATE";
+        	  System.out
+	          .println(processUID + " Received leader's  Id :" + messageFromLNeighbor.getId());
+        	  messageToRNeighbor = messageFromLNeighbor;
+          }
+          
+          //Broadcasting leader's UID to left neighbors
+          if (messageFromRNeighbor != null  && (messageFromRNeighbor.getMessageType() == "ELECTED")) {
+        	  if (this.status == "TERMINATE") //thread already terminated
+        		  break;
+        	  this.status = "TERMINATE";
+        	  System.out
+	          .println(processUID + " Received leader's  Id :" + messageFromRNeighbor.getId());
+        	  messageToLNeighbor = messageFromRNeighbor;
+          }
 	      
-	      
-	      if (this.messageLNeighbor.getDirection() == 1) {
+	      if (messageFromLNeighbor != null && messageFromLNeighbor.getDirection() == 1) {
 	    	  
-	    	  Message leftMessage = this.messageLNeighbor;
+	    	  Message leftMessage = messageFromLNeighbor;
 	    	  if ((leftMessage.getId() > this.processUID) && leftMessage.getHops() > 1) {
 	    		  this.status = "RELAY";
-	    		  leftMessage.setHops(leftMessage.getHops()-1); 
-	    		  this.messageToRNeighbor = (leftMessage);
-	    	  }
-	    	  else if((leftMessage.getId() > this.processUID) && (leftMessage.getHops() == 1)) {
 	    		  System.out
 		          .println("Process with Id :" + this.processUID + " is relay and process with id :" + leftMessage.getId() + " is leader");
+	    		  Message lMessage = new Message(leftMessage.getId(), leftMessage.getHops()-1, leftMessage.getDirection(), "UNKNOWN");
+	    		  messageToRNeighbor = (lMessage);
+	    	  }
+	    	  else if((leftMessage.getId() > this.processUID) && (leftMessage.getHops() == 1)) {
 	    		  this.status = "RELAY";
-	    		  leftMessage.setDirection(0);
-	    		  this.messageToLNeighbor = (leftMessage);
 	    		  System.out
-		          .println("Process with Id :" + this.processUID + " message :" + this.messageToLNeighbor.getId() + this.messageToLNeighbor.getDirection());
-
+		          .println("Process with Id :" + this.processUID + " is relay and process with id :" + leftMessage.getId() + " is leader");
+	    		  Message lMessage = new Message(leftMessage.getId(), leftMessage.getHops(), 0, "UNKNOWN");
+	    		  messageToLNeighbor = (lMessage);
 	    	  }
 	    	  else if (leftMessage.getId() == this.processUID) {
+	    		  leader = this.processUID;
 	    		  status = "LEADER";
-	    		  done = true;
+	    		  leftMessage.setMessageType("LEADER");
+	    		  Message lMessage = new Message(leader, leftMessage.getHops(), -1, "ELECTED");
+	    		  messageToLNeighbor = (lMessage);
 	    		  System.out
-		          .println("Process with Id :" + this.processUID + " is leader");
-	    		  break;
-	    	  }
+		          .println("Process with Id :" + this.processUID + " is leader");	          
+	          }
 	      }
 	      
-	      if (this.messageRNeighbor.getDirection() == 1) {
+	      if (messageFromRNeighbor != null && messageFromRNeighbor.getDirection() == 1) {
 	    	  
-	    	  Message rightMessage = this.messageRNeighbor;
+	    	  Message rightMessage = messageFromRNeighbor;
 	    	  if ((rightMessage.getId() > this.processUID) && rightMessage.getHops() > 1) {
 	    		  this.status = "RELAY";
-	    		  rightMessage.setHops(rightMessage.getHops()-1);
-	    		  this.messageToLNeighbor = (rightMessage);
-	    	  }
-	    	  else if((rightMessage.getId() > this.processUID) && (rightMessage.getHops() == 1)) {
 	    		  System.out
 		          .println("Process with Id :" + this.processUID + " is relay and process with id :" + rightMessage.getId() + " is leader");
+	    		  Message rMessage = new Message(rightMessage.getId(),rightMessage.getHops()-1,rightMessage.getDirection(), "UNKNOWN");
+	    		  messageToLNeighbor = (rMessage);
+	    	  }
+	    	  else if((rightMessage.getId() > this.processUID) && (rightMessage.getHops() == 1)) {
 	    		  this.status = "RELAY";
-	    		  rightMessage.setDirection(0);
-	    		  this.messageToRNeighbor = (rightMessage);
 	    		  System.out
-		          .println("Process with Id :" + this.processUID + " message :" + this.messageToRNeighbor);
+		          .println("Process with Id :" + this.processUID + " is relay and process with id :" + rightMessage.getId() + " is leader");
+	    		  Message rMessage = new Message(rightMessage.getId(),rightMessage.getHops(),0, "UNKNOWN");
+	    		  messageToRNeighbor = (rMessage);
+	    		  //System.out
+		          //.println("Process with Id :" + this.processUID + " message :" + this.messageToRNeighbor);
 	    	  }
 	    	  else if (rightMessage.getId() == this.processUID) {
+	    		  leader = this.processUID;
 	    		  status = "LEADER";
-	    		  done = true;
+	    		  rightMessage.setMessageType("LEADER");
+	    		  Message rMessage = new Message(this.processUID,rightMessage.getHops(),-1, "ELECTED");
+	    		  messageToRNeighbor = (rMessage);
 	    		  System.out
 		          .println("Process with Id :" + this.processUID + " is leader");
-	    		  break;
 	    	  }
 	      }
 	      
-	      if ((this.messageLNeighbor.getDirection() == 0) && this.messageLNeighbor.getId() > this.processUID) {
-	    	  this.messageToRNeighbor = (this.messageLNeighbor);
-	      }
-	      
-	      if ((this.messageRNeighbor.getDirection() == 0) && (this.messageRNeighbor.getId() > this.processUID)) {
-	    	  this.messageToLNeighbor = (this.messageLNeighbor);
-	      }
-	      
-	      if ((this.messageLNeighbor.getDirection() == 0) && (this.messageRNeighbor.getDirection() == 0)) {
+	      //Pass INWARD message from left to right neighbor
+	      if ((messageFromLNeighbor != null) && (messageFromLNeighbor.getDirection() == 0) && messageFromLNeighbor.getId() > this.processUID) {
 	    	  System.out
-	          .println("Phase is :" + this.phase + " and UID is " + this.processUID);
-	    	  this.phase++;
-	    	  
-	    	  this.messageLNeighbor.setHops((int) Math.pow(2, phase));
-	    	  this.messageLNeighbor.setDirection(1);
-	    	  this.messageToLNeighbor = (this.messageLNeighbor);
-	    	  this.messageToRNeighbor = (this.messageLNeighbor);
+	          .println("Process with Id :" + this.processUID + " is relay and process with id :" + messageFromLNeighbor.getId() + " is leader");
+	    	  messageToRNeighbor = (messageFromLNeighbor);
 	      }
-	    
+	      
+          //Pass INWARD message from right to left neighbor
+	      if ((messageFromRNeighbor != null) && (messageFromRNeighbor.getDirection() == 0) && (messageFromRNeighbor.getId() > this.processUID)) {
+	    	  System.out
+	          .println("Process with Id :" + this.processUID + " is relay and process with id :" + messageFromRNeighbor.getId() + " is leader");
+	    	  messageToLNeighbor = (messageFromRNeighbor);
+	      }
+	      
+	      if ((messageFromRNeighbor != null) && (messageFromLNeighbor != null) && (messageFromLNeighbor.getDirection() == 0) && (messageFromRNeighbor.getDirection() == 0)) {
+	    	  phase++;
+	    	  System.out
+	          .println("Phase is :" + phase + " and UID is " + this.processUID);
+	    	  messageFromLNeighbor.setHops((int) Math.pow(2, phase));
+	    	  messageFromLNeighbor.setDirection(1);
+	    	  messageToLNeighbor = (messageFromLNeighbor);
+	    	  messageToRNeighbor = (messageFromLNeighbor);
+	      }
+	      /*
 	      System.out
 	          .println("Process Id is :" + this.processId + " and its UID is :" + this.processUID);
-	      
+	      */
 	      try {
-	            // do not proceed, until all [count] threads
-	            // have reached this position
+	            // do not proceed, until all n threads have reached this position
 	            barrier.await();
           } catch (InterruptedException ex) {
         	  return;
@@ -175,6 +196,8 @@ public class HSAlgoImpl implements HSAlgo {
         	  return;
           }
       }
+      
+      
     }
     
     /** setters & getters **/
@@ -196,19 +219,19 @@ public class HSAlgoImpl implements HSAlgo {
   	}
   	
   	public Message getLNeighborMessage(){ 
-  		return messageLNeighbor;
+  		return messageFromLNeighbor;
   	}
   	
   	public void setLNeighborMessage(Message message) {
-  		messageLNeighbor = message;
+  		messageFromLNeighbor = message;
   	}
   	
   	public void setRNeighborMessage(Message message) {
-  		messageRNeighbor = message;
+  		messageFromRNeighbor = message;
   	}
   	
   	public Message getRNeighborMessage(){
-  		return messageRNeighbor;
+  		return messageFromRNeighbor;
   	}
   	
   	/** other methods **/
@@ -259,19 +282,23 @@ public class HSAlgoImpl implements HSAlgo {
     System.out.println("Message received: " + processZero.getLNeighborMessage().getDirection());
   */ 
     
+    barrier_message_sent = new CyclicBarrier(num_of_processes);
+    
     //start threads
     for (int i = 0; i < num_of_processes; i++)
         threads[i].start();
     
     barrier = new CyclicBarrier(num_of_processes,
 	   new Runnable() {
+		  int round = 1;
 	      @Override
 	      public void run() {
-	    	  System.out.println("Executing next round ");
+	    	  round++;
+	    	  System.out.println("Executing " + round + " round ");
 	      }
 	    }
 	 );
-
+ 
     // dummy return
     return new ProcessUID(10, 100);
 
