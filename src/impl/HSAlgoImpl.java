@@ -19,7 +19,6 @@ public class HSAlgoImpl implements HSAlgo {
   private static CountDownLatch latch;
   
   private static ProcessUID leader;
-  private static boolean done = false;
 
   public HSAlgoImpl(int num_of_processes, ProcessUID[] processUID) {
     this.num_of_processes = num_of_processes;
@@ -72,12 +71,14 @@ public class HSAlgoImpl implements HSAlgo {
       messageToRNeighbor = new Message(this.processUID, 1, 1, MessageType.UNKNOWN);
       messageToLNeighbor = new Message(this.processUID, 1, 1, MessageType.UNKNOWN);
       
-      while(!done) { 
-          this.sendMessageToLeftNeighbor(messageToLNeighbor);
-    	  this.sendMessageToRightNeighbor(messageToRNeighbor);
+      while(true) { 
+    	  if (messageToLNeighbor != null)
+    		  this.sendMessageToLeftNeighbor(messageToLNeighbor);
+    	  if (messageToRNeighbor != null)
+    		  this.sendMessageToRightNeighbor(messageToRNeighbor);
     	  
     	  try {
-	            // do not proceed, until all n threads have sent messages to it's neighbors
+	          // do not proceed, until all n threads have sent messages to it's neighbors
 	          barrier_message_sent.await();
           } catch (InterruptedException ex) {
         	  return;
@@ -188,6 +189,9 @@ public class HSAlgoImpl implements HSAlgo {
 	    	  messageToLNeighbor = (messageFromLNeighbor);
 	    	  messageToRNeighbor = (messageFromLNeighbor);
 	      }
+	      
+          messageFromLNeighbor = null;
+          messageFromRNeighbor = null;
 
 	      try {
 	            // do not proceed, until all n threads have reached this position
