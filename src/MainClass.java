@@ -2,14 +2,13 @@ import java.util.Scanner;
 
 import impl.HSAlgoImpl;
 import interfaces.HSAlgo;
-import util.Message;
 import util.ProcessUID;
 
 /**
  * 
  * Java Main class which takes the input from user
  * 
- * @author varadhan, Madison
+ * @author varadhan, Madison, Prameela
  *
  */
 public class MainClass {
@@ -25,7 +24,6 @@ public class MainClass {
     for (int i = 0; i < input_num_of_processes; i++) {
       processUIDObject[i] = new ProcessUID(i, input_scanner.nextInt());
     }
-    
  
     input_scanner.close();
 
@@ -33,6 +31,6 @@ public class MainClass {
 
     ProcessUID leaderUIDObj = algo.execute();
 
-
+    System.out.println("Process with id: " + leaderUIDObj.getProcessNumber() + " and UI: " + leaderUIDObj.getProcessUID() + " is leader");
   }
 }
