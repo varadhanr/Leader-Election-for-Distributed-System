@@ -10,12 +10,14 @@ package util;
 public class Message {
 	private int id;
 	private int hops;
-	private int direction; //an int indicating direction, x if going out, x if going in
+	private int direction; //an int indicating direction, 1 if going out, 0 if going in
+	MessageType messageType;
 	
-	public Message(int originatorsID, int startingHopsNum, int directionOfTravel) {
+	public Message(int originatorsID, int startingHopsNum, int directionOfTravel, MessageType type) {
 		id = originatorsID;
 		hops = startingHopsNum;
 		direction = directionOfTravel;
+		messageType = type;
 	}
 	
 	public int getId() {
@@ -37,4 +39,14 @@ public class Message {
 	public void setDirection(int newDirection){
 		direction = newDirection;
 	}
+	
+	
+	public MessageType getMessageType(){
+		return messageType;
+	}
+	
+	public void setMessageType(MessageType type){
+		messageType = type;
+	}
+	
 }
