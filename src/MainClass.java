@@ -24,13 +24,16 @@ public class MainClass {
     for (int i = 0; i < input_num_of_processes; i++) {
       processUIDObject[i] = new ProcessUID(i, input_scanner.nextInt());
     }
- 
+
     input_scanner.close();
 
     HSAlgo algo = new HSAlgoImpl(input_num_of_processes, processUIDObject);
 
     ProcessUID leaderUIDObj = algo.execute();
 
-    System.out.println("Process with id: " + leaderUIDObj.getProcessNumber() + " and UI: " + leaderUIDObj.getProcessUID() + " is leader");
+    System.out.println("Process with id: " + leaderUIDObj.getProcessNumber() + " and UI: "
+        + leaderUIDObj.getProcessUID() + " is leader");
+    
+    System.exit(0);
   }
 }
