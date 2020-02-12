@@ -1,0 +1,66 @@
+Process with Id :609 is relay and process with id :713 is leader
+Process with Id :3 is relay and process with id :4356 is leader
+Process with Id :713 is relay and process with id :8456 is leader
+Process with Id :523 is relay and process with id :609 is leader
+Process with Id :1 is relay and process with id :134 is leader
+Executing 2 round 
+Phase is :1 and UID is 134
+Phase is :1 and UID is 4356
+Phase is :1 and UID is 8456
+Executing 3 round 
+Process with Id :3 is relay and process with id :4356 is leader
+Process with Id :1 is relay and process with id :134 is leader
+Process with Id :713 is relay and process with id :8456 is leader
+Executing 4 round 
+Process with Id :20 is relay and process with id :4356 is leader
+Process with Id :91 is relay and process with id :134 is leader
+Process with Id :609 is relay and process with id :8456 is leader
+Executing 5 round 
+Executing 6 round 
+Phase is :2 and UID is 134
+Phase is :2 and UID is 4356
+Phase is :2 and UID is 8456
+Executing 7 round 
+Process with Id :1 is relay and process with id :134 is leader
+Process with Id :713 is relay and process with id :8456 is leader
+Process with Id :3 is relay and process with id :4356 is leader
+Executing 8 round 
+Process with Id :20 is relay and process with id :4356 is leader
+Process with Id :91 is relay and process with id :134 is leader
+Process with Id :609 is relay and process with id :8456 is leader
+Executing 9 round 
+Process with Id :134 is relay and process with id :4356 is leader
+Process with Id :523 is relay and process with id :8456 is leader
+Executing 10 round 
+Process with Id :1 is relay and process with id :4356 is leader
+Process with Id :4356 is relay and process with id :8456 is leader
+Executing 11 round 
+Phase is :3 and UID is 134
+Executing 12 round 
+Process with Id :1 is relay and process with id :4356 is leader
+Executing 13 round 
+Process with Id :91 is relay and process with id :4356 is leader
+Executing 14 round 
+Leader found
+Executing 15 round 
+3 received leader's  UID :4356
+Executing 16 round 
+20 received leader's  UID :4356
+Executing 17 round 
+134 received leader's  UID :4356
+Executing 18 round 
+1 received leader's  UID :4356
+Executing 19 round 
+91 received leader's  UID :4356
+Executing 20 round 
+8456 received leader's  UID :4356
+Executing 21 round 
+713 received leader's  UID :4356
+Executing 22 round 
+609 received leader's  UID :4356
+Executing 23 round 
+523 received leader's  UID :4356
+Executing 24 round 
+4356 received leader's  UID :4356
+Executing 25 round 
+Process with id: 3 and UI: 4356 is leader

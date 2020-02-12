@@ -11,6 +11,9 @@ import util.ProcessUID;
  * Java Main class which takes the input from user
  * 
  * @author varadhan, Madison, Prameela
+ * 
+ * Course Name: Distributed Computing CS 6380.001
+ * Submission by Madison, Prameela and Varadhan
  *
  */
 public class MainClass {
