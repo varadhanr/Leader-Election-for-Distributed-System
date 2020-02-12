@@ -12,12 +12,24 @@ git clone and compile using java
 ```shell
 git clone https://github.com/varadhanr/Leader-Election-for-Distributed-System.git
 cd Leader-Election-for-Distributed-System/src
-javac MainClass.java
+javac src/MainClass.java
 ```
 
 How to Compile and run
 ----------------------
+With File as input:
+
 ```shell
-javac MainClass.java
-java MainClass
+javac src/MainClass.java
+java src/MainClass input.txt
 ```
+
+```shell
+javac src/MainClass.java
+java src/MainClass
+```
+Project Details
+---------------
+Course Name : Distributed Computing
+
+Submission by : Madison Pickering (MAP170330), Prameela Parasa (PXP180046) and Varadhan Ramamoorthy (VRR180003)

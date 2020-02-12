@@ -11,6 +11,9 @@ import util.ProcessUID;
  * Java Main class which takes the input from user
  * 
  * @author varadhan, Madison, Prameela
+ * 
+ * Course Name: Distributed Computing CS 6380.001 
+ * Submission by Madison Pickering (MAP170330), Prameela Parasa (PXP180046) and Varadhan Ramamoorthy (VRR180003)
  *
  */
 public class MainClass {
@@ -35,7 +38,7 @@ public class MainClass {
       processUIDObject = new ProcessUID[input_num_of_processes];
 
       for (int i = 0; i < input_num_of_processes; i++) {
-        processUIDObject[i] = new ProcessUID(i,fileScanner.nextInt());
+        processUIDObject[i] = new ProcessUID(i, fileScanner.nextInt());
       }
       fileScanner.close();
 
@@ -58,7 +61,7 @@ public class MainClass {
 
     ProcessUID leaderUIDObj = algo.execute();
 
-    System.out.println("Process with id: " + leaderUIDObj.getProcessNumber() + " and UI: "
+    System.out.println("Process with id: " + leaderUIDObj.getProcessNumber() + " and UID: "
         + leaderUIDObj.getProcessUID() + " is leader");
 
     System.exit(0);
