@@ -24,13 +24,14 @@ allprojects{
 
 
 
-task fatJar(type: Jar) {
+task generateJar(type: Jar) {
 	manifest {
         attributes 'Implementation-Title': 'Gradle Jar File Example',  
-        	'Implementation-Version': version,
         	'Main-Class': 'hs.MainClass'
     }
-    baseName = project.name + '-all'
+    archiveBaseName = project.name + '-all'
+    archiveFileName = 'LeaderElectionUsingHS.jar'
+    archiveVersion = project.version
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }
