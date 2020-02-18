@@ -23,6 +23,7 @@ allprojects{
 }
 
 
+configurations.implementation.canBeResolved = true
 
 task generateJar(type: Jar) {
 	manifest {
@@ -32,7 +33,7 @@ task generateJar(type: Jar) {
     archiveBaseName = project.name + '-all'
     archiveFileName = 'LeaderElectionUsingHS.jar'
     archiveVersion = project.version
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    from { configurations.implementation.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }
 
