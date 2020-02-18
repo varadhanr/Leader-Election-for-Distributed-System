@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"hs.interfaces","l":"HSAlgo"},{"p":"hs.impl","l":"HSAlgoImpl"},{"p":"hs","l":"MainClass"},{"p":"hs.util","l":"Message"},{"p":"hs.util","l":"MessageType"},{"p":"hs.util","l":"ProcessUID"},{"p":"hs.util","l":"Status"}]

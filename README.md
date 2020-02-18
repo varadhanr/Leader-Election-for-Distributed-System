@@ -43,3 +43,7 @@ Project Details
 Course Name : Distributed Computing
 
 Submission by : Madison Pickering (MAP170330), Prameela Parasa (PXP180046) and Varadhan Ramamoorthy (VRR180003)
+
+Java Docs
+-----------
+[Java docs](docs/javadoc/index.html)
