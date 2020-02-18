@@ -1,7 +1,7 @@
 /**Message.java contains the basic information held by a message
  * 
  */
-package util;
+package hs.util;
 
 /**
  * @author Madison Pickering

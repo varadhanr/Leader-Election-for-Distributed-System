@@ -1,10 +1,11 @@
+package hs;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-import impl.HSAlgoImpl;
-import interfaces.HSAlgo;
-import util.ProcessUID;
+import hs.impl.HSAlgoImpl;
+import hs.util.ProcessUID;
+import hs.interfaces.HSAlgo;
 
 /**
  * 

@@ -1,6 +1,6 @@
-package interfaces;
+package hs.interfaces;
 
-import util.ProcessUID;
+import hs.util.ProcessUID;;
 
 /**
  * 

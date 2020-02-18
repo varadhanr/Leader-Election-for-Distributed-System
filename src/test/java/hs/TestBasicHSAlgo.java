@@ -1,10 +1,10 @@
-package test;
+package hs;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
-import impl.HSAlgoImpl;
-import interfaces.HSAlgo;
-import util.ProcessUID;
-import org.junit.Assert;
+import hs.impl.HSAlgoImpl;
+import hs.interfaces.HSAlgo;
+import hs.util.ProcessUID;
 
 public class TestBasicHSAlgo {
   @Test
