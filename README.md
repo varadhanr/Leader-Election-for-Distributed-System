@@ -17,16 +17,26 @@ javac src/MainClass.java
 
 How to Compile and run
 ----------------------
+
+Using Gradle Build tool:
+
+```shell
+./gradlew build
+./gradlew run
+./gradlew test
+```
 With File as input:
 
 ```shell
-javac src/MainClass.java
-java src/MainClass input.txt
+javac src/main/java/hs/MainClass.java
+java src/main/java/hs/MainClass src/main/java/hs/contents/input.txt
 ```
 
+With User Input:
+
 ```shell
-javac src/MainClass.java
-java src/MainClass
+javac src/main/java/hs/MainClass.java
+java src/main/java/hs/MainClass
 ```
 Project Details
 ---------------
